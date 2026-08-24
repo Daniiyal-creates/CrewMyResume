@@ -1,0 +1,6 @@
+{
+  "name": "CrewMyResume",
+  "description": "Multi-agent autonomous resume generator and ATS optimizer orchestrating Analyzer, Strategist, ATS Optimizer, Designer, and QA agents.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
