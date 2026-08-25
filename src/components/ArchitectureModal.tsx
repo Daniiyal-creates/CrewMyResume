@@ -1,5 +1,6 @@
 import React from 'react';
-import { X, Bot, Zap, ArrowRight, CheckCircle, ShieldCheck, Layers, GitFork, Cpu } from 'lucide-react';
+import { X, Bot, Zap, ArrowRight, CheckCircle, ShieldCheck, Layers, GitFork, Cpu, Brain, Layout, Award, Code2 } from 'lucide-react';
+import { AGENT_SPECS } from './AgentDagVisualizer.js';
 
 interface ArchitectureModalProps {
   isOpen: boolean;
@@ -10,202 +11,157 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6">
-      <div className="relative bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-xl border border-[#E9ECEF]">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 text-slate-900">
+      <div className="relative bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-white px-6 py-4 border-b border-[#E9ECEF] flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded bg-[#1A1A1A] flex items-center justify-center text-white">
-              <Layers className="w-4 h-4" />
+        <div className="sticky top-0 z-10 bg-slate-900 text-white px-6 py-5 border-b border-slate-800 flex items-center justify-between">
+          <div className="flex items-center gap-3.5">
+            <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-xs">
+              <Layers className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-[#1A1A1A]">CrewMyResume Architecture & Orchestration</h2>
-              <p className="text-xs text-[#868E96]">Multi-Agent Design with CrewAI & LangChain Principles</p>
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-bold text-white">CrewMyResume Architecture & Orchestration</h2>
+                <span className="text-[10px] font-mono-code font-bold uppercase px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                  CrewAI + LangChain
+                </span>
+              </div>
+              <p className="text-xs text-slate-400">Directed Acyclic Graph (DAG) with Deterministic Tool Handoffs</p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded text-[#868E96] hover:text-[#1A1A1A] hover:bg-[#F1F3F5] transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-6 space-y-6 text-[#212529] text-xs">
-          {/* Section: Orchestration Workflow DAG */}
+        <div className="p-6 sm:p-8 space-y-8 text-slate-700 text-xs">
+          {/* Section 1: DAG Flow */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] mb-3 flex items-center gap-2">
-              <GitFork className="w-3.5 h-3.5 text-[#1A1A1A]" />
+            <h3 className="text-xs font-mono-code font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-2">
+              <GitFork className="w-4 h-4 text-indigo-600" />
               1. Multi-Agent Task Dependency Graph
             </h3>
-            <div className="bg-[#F8F9FA] rounded-lg p-4 border border-[#E9ECEF] overflow-x-auto">
+            <div className="bg-[#0C0E14] text-white rounded-xl p-5 border border-slate-800 overflow-x-auto">
               <div className="flex flex-col md:flex-row items-center justify-between gap-3 min-w-[650px] text-xs">
                 {/* Step 1 */}
-                <div className="flex-1 bg-white p-3 rounded border border-[#E9ECEF]">
-                  <div className="flex items-center gap-2 font-bold text-[#1A1A1A] mb-1">
-                    <span className="w-4 h-4 rounded bg-[#F1F3F5] flex items-center justify-center text-[10px]">1</span>
+                <div className="flex-1 bg-[#121620] p-3.5 rounded-lg border border-blue-500/30">
+                  <div className="flex items-center gap-2 font-bold text-blue-400 mb-1 font-mono-code">
+                    <span className="w-4 h-4 rounded bg-blue-500/20 flex items-center justify-center text-[10px]">1</span>
                     Analyzer Agent
                   </div>
-                  <p className="text-[11px] text-[#868E96]">Sequential: Normalizes taxonomy & career timeline</p>
+                  <p className="text-[11px] text-slate-400">Sequential: Normalizes taxonomy & career timeline into typed schema</p>
                 </div>
 
-                <ArrowRight className="w-3.5 h-3.5 text-[#868E96] shrink-0 hidden md:block" />
+                <ArrowRight className="w-4 h-4 text-slate-600 shrink-0 hidden md:block" />
 
                 {/* Step 2 Parallel */}
                 <div className="flex-1 space-y-2">
-                  <div className="bg-white p-2.5 rounded border border-[#E9ECEF]">
-                    <div className="flex items-center gap-1.5 font-bold text-[#1A1A1A]">
-                      <span className="w-4 h-4 rounded bg-[#F1F3F5] flex items-center justify-center text-[9px]">2A</span>
+                  <div className="bg-[#121620] p-2.5 rounded-lg border border-purple-500/30">
+                    <div className="flex items-center gap-1.5 font-bold text-purple-400 font-mono-code text-[11px]">
+                      <span className="w-4 h-4 rounded bg-purple-500/20 flex items-center justify-center text-[9px]">2A</span>
                       Strategist (Google XYZ)
                     </div>
                   </div>
-                  <div className="bg-white p-2.5 rounded border border-[#E9ECEF]">
-                    <div className="flex items-center gap-1.5 font-bold text-[#1A1A1A]">
-                      <span className="w-4 h-4 rounded bg-[#F1F3F5] flex items-center justify-center text-[9px]">2B</span>
+                  <div className="bg-[#121620] p-2.5 rounded-lg border border-emerald-500/30">
+                    <div className="flex items-center gap-1.5 font-bold text-emerald-400 font-mono-code text-[11px]">
+                      <span className="w-4 h-4 rounded bg-emerald-500/20 flex items-center justify-center text-[9px]">2B</span>
                       ATS Optimizer (Keywords)
                     </div>
                   </div>
-                  <p className="text-[10px] text-center text-[#868E96] font-medium">Parallel Execution</p>
+                  <p className="text-[10px] text-center text-slate-400 font-mono-code font-bold uppercase">Parallel Execution</p>
                 </div>
 
-                <ArrowRight className="w-3.5 h-3.5 text-[#868E96] shrink-0 hidden md:block" />
+                <ArrowRight className="w-4 h-4 text-slate-600 shrink-0 hidden md:block" />
 
                 {/* Step 3 */}
-                <div className="flex-1 bg-white p-3 rounded border border-[#E9ECEF]">
-                  <div className="flex items-center gap-2 font-bold text-[#1A1A1A] mb-1">
-                    <span className="w-4 h-4 rounded bg-[#F1F3F5] flex items-center justify-center text-[10px]">3</span>
+                <div className="flex-1 bg-[#121620] p-3.5 rounded-lg border border-amber-500/30">
+                  <div className="flex items-center gap-2 font-bold text-amber-400 mb-1 font-mono-code">
+                    <span className="w-4 h-4 rounded bg-amber-500/20 flex items-center justify-center text-[10px]">3</span>
                     Designer Agent
                   </div>
-                  <p className="text-[11px] text-[#868E96]">Sequential: Layout hierarchy & schema formatting</p>
+                  <p className="text-[11px] text-slate-400">Sequential: Layout hierarchy, typography & schema formatting</p>
                 </div>
 
-                <ArrowRight className="w-3.5 h-3.5 text-[#868E96] shrink-0 hidden md:block" />
+                <ArrowRight className="w-4 h-4 text-slate-600 shrink-0 hidden md:block" />
 
                 {/* Step 4 */}
-                <div className="flex-1 bg-white p-3 rounded border border-[#E9ECEF]">
-                  <div className="flex items-center gap-2 font-bold text-[#1A1A1A] mb-1">
-                    <span className="w-4 h-4 rounded bg-[#F1F3F5] flex items-center justify-center text-[10px]">4</span>
+                <div className="flex-1 bg-[#121620] p-3.5 rounded-lg border border-rose-500/30">
+                  <div className="flex items-center gap-2 font-bold text-rose-400 mb-1 font-mono-code">
+                    <span className="w-4 h-4 rounded bg-rose-500/20 flex items-center justify-center text-[10px]">4</span>
                     QA Agent
                   </div>
-                  <p className="text-[11px] text-[#868E96]">Verification: Tense audit, grammar & certification</p>
+                  <p className="text-[11px] text-slate-400">Verification: Tense audit, grammar harmony & certification</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Section: Agent Roles Table */}
+          {/* Section 2: Agent Specs Grid */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] mb-3 flex items-center gap-2">
-              <Bot className="w-3.5 h-3.5 text-[#1A1A1A]" />
-              2. Agent Roles, Backstories & Tools
+            <h3 className="text-xs font-mono-code font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-2">
+              <Bot className="w-4 h-4 text-indigo-600" />
+              2. Agent Roles, Directives & Named Tools
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-              <div className="p-3.5 bg-[#F8F9FA] rounded border border-[#E9ECEF] space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-[#1A1A1A]">Resume Analyzer Agent</span>
-                  <span className="px-2 py-0.5 rounded bg-[#F1F3F5] text-[#495057] font-semibold text-[10px]">Extractor</span>
-                </div>
-                <p className="text-[#495057] text-[11px]">
-                  <strong>Role:</strong> Principal Technical Talent Assessor.
-                </p>
-                <p className="text-[#868E96] text-[11px]">
-                  <strong>Tools:</strong> SchemaNormalizer, SkillTaxonomyExtractor, ChronologyValidator.
-                </p>
-              </div>
-
-              <div className="p-3.5 bg-[#F8F9FA] rounded border border-[#E9ECEF] space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-[#1A1A1A]">Content Strategist Agent</span>
-                  <span className="px-2 py-0.5 rounded bg-[#F1F3F5] text-[#495057] font-semibold text-[10px]">Narrative</span>
-                </div>
-                <p className="text-[#495057] text-[11px]">
-                  <strong>Role:</strong> Executive Resume Strategist & Career Coach.
-                </p>
-                <p className="text-[#868E96] text-[11px]">
-                  <strong>Tools:</strong> GoogleXYZTransformer, ImpactQuantifier, ActiveVerbEnhancer.
-                </p>
-              </div>
-
-              <div className="p-3.5 bg-[#F8F9FA] rounded border border-[#E9ECEF] space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-[#1A1A1A]">ATS Optimizer Agent</span>
-                  <span className="px-2 py-0.5 rounded bg-[#F1F3F5] text-[#495057] font-semibold text-[10px]">Algorithms</span>
-                </div>
-                <p className="text-[#495057] text-[11px]">
-                  <strong>Role:</strong> Applicant Tracking System (ATS) Specialist.
-                </p>
-                <p className="text-[#868E96] text-[11px]">
-                  <strong>Tools:</strong> ATSScoringEngine, KeywordDensityAnalyzer, JobDescriptionParser.
-                </p>
-              </div>
-
-              <div className="p-3.5 bg-[#F8F9FA] rounded border border-[#E9ECEF] space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-[#1A1A1A]">Resume Designer Agent</span>
-                  <span className="px-2 py-0.5 rounded bg-[#F1F3F5] text-[#495057] font-semibold text-[10px]">Typography</span>
-                </div>
-                <p className="text-[#495057] text-[11px]">
-                  <strong>Role:</strong> Document Layout Architect & Typographer.
-                </p>
-                <p className="text-[#868E96] text-[11px]">
-                  <strong>Tools:</strong> LayoutFormatter, HierarchyEngine, MarkdownGenerator.
-                </p>
-              </div>
-
-              <div className="p-3.5 bg-[#F8F9FA] rounded border border-[#E9ECEF] space-y-1.5 md:col-span-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-[#1A1A1A]">Quality Assurance Agent</span>
-                  <span className="px-2 py-0.5 rounded bg-[#F1F3F5] text-[#495057] font-semibold text-[10px]">Verification</span>
-                </div>
-                <p className="text-[#495057] text-[11px]">
-                  <strong>Role:</strong> Senior Technical Recruiter & Editorial QA Lead.
-                </p>
-                <p className="text-[#868E96] text-[11px]">
-                  <strong>Tools:</strong> GrammarConsistencyChecker, TenseAuditor, ChronologyGapValidator.
-                </p>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              {AGENT_SPECS.map((agent) => {
+                const Icon = agent.icon;
+                return (
+                  <div key={agent.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Icon className="w-4 h-4 text-indigo-600" />
+                        <span className="font-bold text-slate-900 font-mono-code">{agent.name}</span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded bg-white text-slate-700 font-semibold text-[10px] font-mono-code border border-slate-200">
+                        {agent.codename}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 text-xs">
+                      <strong>Role:</strong> {agent.role}
+                    </p>
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {agent.tools.map((t, i) => (
+                        <span key={i} className="px-2 py-0.5 rounded bg-white text-indigo-900 border border-indigo-200 font-mono-code text-[10px]">
+                          ⚡ {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          {/* Section: Methodology & Formulas */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-[#F8F9FA] rounded border border-[#E9ECEF]">
-              <h4 className="font-bold text-[#1A1A1A] text-xs uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <Zap className="w-3.5 h-3.5 text-[#1A1A1A]" />
-                Google XYZ Formula Applied
-              </h4>
-              <p className="text-xs text-[#212529] font-medium mb-1">
-                "Accomplished [X], as measured by [Y], by doing [Z]"
-              </p>
-              <p className="text-[11px] text-[#495057]">
-                The Content Strategist agent reframes every generic task into a quantifiable business or technical achievement.
-              </p>
+          {/* Section 3: Google XYZ Formula */}
+          <div className="p-5 rounded-xl bg-indigo-50/70 border border-indigo-100 space-y-2">
+            <h4 className="font-bold text-indigo-950 font-mono-code text-xs uppercase tracking-wider flex items-center gap-2">
+              <Zap className="w-4 h-4 text-indigo-600" />
+              3. The Google XYZ Formula Implementation
+            </h4>
+            <p className="text-slate-700 text-xs leading-relaxed">
+              Every bullet point produced by the <strong>Content Strategist Agent</strong> strictly adheres to the standard established by Laszlo Bock (former VP of People Operations at Google):
+            </p>
+            <div className="p-3 bg-white rounded-lg border border-indigo-200 font-mono-code text-xs text-indigo-900 font-semibold">
+              &quot;Accomplished [X], as measured by [Y], by doing [Z]&quot;
             </div>
-
-            <div className="p-4 bg-[#F8F9FA] rounded border border-[#E9ECEF]">
-              <h4 className="font-bold text-[#1A1A1A] text-xs uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#1A1A1A]" />
-                ATS Keyword Algorithmic Alignment
-              </h4>
-              <p className="text-xs text-[#212529] font-medium mb-1">
-                Vector Similarity & Token Frequency
-              </p>
-              <p className="text-[11px] text-[#495057]">
-                Extracts top technical skills from the target Job Description and harmonizes them into experience highlights and skills taxonomies.
-              </p>
-            </div>
+            <p className="text-[11px] text-slate-500">
+              Where [X] is the business or technical outcome, [Y] is the quantitative baseline metric (%, $, ms, users), and [Z] is the specific methodology, tools, and technical leadership applied.
+            </p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3.5 bg-[#F8F9FA] border-t border-[#E9ECEF] flex justify-end">
+        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-[#1A1A1A] text-white rounded text-xs font-semibold hover:bg-black transition-colors"
+            className="px-5 py-2 rounded-lg bg-slate-900 text-white text-xs font-semibold hover:bg-black transition-colors cursor-pointer"
           >
-            Close Architecture View
+            Close Documentation
           </button>
         </div>
       </div>

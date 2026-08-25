@@ -254,4 +254,127 @@ Key responsibilities:
       },
     ],
   },
+  cloud_architect: {
+    targetJobTitle: 'Staff Distributed Systems & Cloud Architect',
+    targetIndustry: 'Cloud Infrastructure & High-Scale Systems',
+    jobDescription: `Seeking a Staff Cloud Infrastructure & Distributed Systems Architect to lead platform reliability and multi-region microservices topology.
+Key Requirements:
+- 8+ years designing mission-critical distributed systems handling 100k+ RPS with Go, Rust, or Java/TypeScript
+- Deep mastery of Kubernetes (EKS/GKE), Terraform, Istio service mesh, Kafka streaming, and PostgreSQL/CockroachDB
+- Proven expertise in disaster recovery, zero-trust network architectures, multi-region failover, and cost optimization
+- Experience collaborating with SRE, Security, and Engineering leadership to drive 99.999% SLA reliability`,
+    personalInfo: {
+      fullName: 'Marcus Vance',
+      jobTitle: 'Staff Cloud Architect | Distributed Systems & Platform Engineering',
+      email: 'marcus.vance.cloud@gmail.com',
+      phone: '+1 (512) 640-9182',
+      location: 'Austin, TX (Open to Remote)',
+      linkedin: 'linkedin.com/in/marcusvance-cloud',
+      github: 'github.com/marcusvance-arch',
+    },
+    summary: 'Staff Cloud & Distributed Systems Architect with 9+ years designing high-throughput, fault-tolerant infrastructure handling over 120,000 requests/sec. Expert in Kubernetes orchestration, event-driven streaming with Kafka, and reducing cloud footprint by 35% through automated autoscaling.',
+    experience: [
+      {
+        id: 'exp-ca-1',
+        company: 'HyperScale Infrastructure Corp',
+        position: 'Staff Cloud Platform Architect',
+        location: 'Austin, TX',
+        startDate: '2021-03',
+        endDate: 'Present',
+        current: true,
+        description: 'Architected multi-region Kubernetes platform across AWS and GCP for 300+ microservices.',
+        highlights: [
+          'Architected an active-active multi-region Kubernetes mesh across AWS and GCP, achieving 99.999% SLA availability and sub-100ms failover during datacenter outages.',
+          'Engineered a distributed Kafka event streaming pipeline processing 180M messages/day, reducing end-to-end event latency by 54%.',
+          'Spearheaded FinOps infrastructure initiative using automated Spot instance orchestration and Karpenter, cutting annual AWS expenditure by $320,000.',
+        ],
+      },
+      {
+        id: 'exp-ca-2',
+        company: 'DataStream Global',
+        position: 'Principal DevOps & Site Reliability Engineer',
+        location: 'Denver, CO',
+        startDate: '2017-06',
+        endDate: '2021-02',
+        current: false,
+        description: 'Led infrastructure reliability, CI/CD automation, and security hardening.',
+        highlights: [
+          'Designed immutable Terraform modules and ArgoCD GitOps pipelines, eliminating configuration drift across 45 staging and production clusters.',
+          'Implemented Prometheus, Thanos, and OpenTelemetry distributed tracing, reducing Mean Time to Detection (MTTD) by 65%.',
+        ],
+      },
+    ],
+    education: [
+      {
+        id: 'edu-ca-1',
+        institution: 'University of Texas at Austin',
+        degree: 'Bachelor of Science',
+        fieldOfStudy: 'Electrical & Computer Engineering',
+        location: 'Austin, TX',
+        startDate: '2012-08',
+        endDate: '2016-05',
+        gpa: '3.88 / 4.0',
+        honors: 'Distinguished Engineering Scholar',
+      },
+    ],
+    skills: {
+      technical: [
+        'Distributed Systems Design',
+        'Go / Golang',
+        'TypeScript / Node.js',
+        'Kubernetes (EKS, GKE)',
+        'Terraform / OpenTofu',
+        'Apache Kafka',
+        'PostgreSQL / CockroachDB',
+        'Redis Cluster',
+        'Docker',
+        'gRPC / Protocol Buffers',
+      ],
+      frameworksAndTools: [
+        'AWS & GCP Solutions',
+        'ArgoCD / GitOps',
+        'Istio Service Mesh',
+        'Prometheus & Grafana',
+        'OpenTelemetry',
+        'Vault & Zero Trust',
+        'Helm',
+        'Linux Kernel Tuning',
+      ],
+      softSkills: [
+        'Architectural Strategy & Governance',
+        'Technical Decision Documents (RFCs)',
+        'Cross-Org Alignment',
+        'Incident Command Leadership',
+      ],
+      languages: ['English (Native)', 'German (Conversational)'],
+    },
+    projects: [
+      {
+        id: 'proj-ca-1',
+        name: 'KubeMesh Orchestrator',
+        role: 'Author',
+        link: 'github.com/marcusvance-arch/kubemesh',
+        technologies: ['Go', 'Kubernetes API', 'eBPF', 'Terraform'],
+        description: 'Lightweight cross-cluster service discovery and latency benchmarking tool for Kubernetes.',
+        highlights: [
+          'Achieved 1,800+ GitHub stars and featured in KubeCon North America community showcase.',
+        ],
+      },
+    ],
+    certifications: [
+      {
+        id: 'cert-ca-1',
+        name: 'Certified Kubernetes Administrator (CKA)',
+        issuer: 'Cloud Native Computing Foundation (CNCF)',
+        date: '2023-08',
+        credentialId: 'CKA-98124',
+      },
+      {
+        id: 'cert-ca-2',
+        name: 'AWS Certified Solutions Architect - Professional',
+        issuer: 'Amazon Web Services',
+        date: '2023-01',
+      },
+    ],
+  },
 };

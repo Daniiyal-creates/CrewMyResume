@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   UserResumeInput,
   OrchestrationResult,
@@ -12,6 +12,7 @@ import {
   AgentLog,
 } from './types.js';
 import { Navbar } from './components/Navbar.js';
+import { LandingView } from './components/LandingView.js';
 import { ArchitectureModal } from './components/ArchitectureModal.js';
 import { InputForm } from './components/InputForm.js';
 import { AgentWorkflowBoard } from './components/AgentWorkflowBoard.js';
@@ -21,7 +22,6 @@ import { QAReportCard } from './components/QAReportCard.js';
 import { SAMPLE_PROFILES } from '../server/sampleData.js';
 import {
   Sparkles,
-  Play,
   FileText,
   ShieldCheck,
   Award,
@@ -76,23 +76,32 @@ const INITIAL_AGENT_STATUSES: Record<AgentRoleType, AgentStatus> = {
 };
 
 export default function App() {
+  const [currentViewMode, setCurrentViewMode] = useState<'landing' | 'workspace'>('landing');
   const [formData, setFormData] = useState<UserResumeInput>(SAMPLE_PROFILES.software_engineer);
   const [isOrchestrating, setIsOrchestrating] = useState(false);
   const [orchestrationResult, setOrchestrationResult] = useState<OrchestrationResult | null>(null);
   const [agentStatuses, setAgentStatuses] = useState<Record<AgentRoleType, AgentStatus>>(INITIAL_AGENT_STATUSES);
   const [logs, setLogs] = useState<AgentLog[]>([]);
-  const [activeView, setActiveView] = useState<'editor' | 'preview' | 'ats_audit' | 'qa_report'>('editor');
+  const [workspaceTab, setWorkspaceTab] = useState<'editor' | 'preview' | 'ats_audit' | 'qa_report'>('editor');
   const [isDocsOpen, setIsDocsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSelectSample = (profileKey: string) => {
     if (SAMPLE_PROFILES[profileKey]) {
       setFormData(SAMPLE_PROFILES[profileKey]);
+      setCurrentViewMode('workspace');
+      setWorkspaceTab('editor');
     }
   };
 
-  const handleRunOrchestration = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleEnterWorkspace = () => {
+    setCurrentViewMode('workspace');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleRunOrchestration = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setCurrentViewMode('workspace');
     setIsOrchestrating(true);
     setErrorMessage(null);
     setLogs([]);
@@ -142,7 +151,7 @@ export default function App() {
               } else if (eventType === 'pipeline_completed') {
                 setOrchestrationResult(eventData);
                 setAgentStatuses(eventData.agentStatuses);
-                setActiveView('preview');
+                setWorkspaceTab('preview');
                 confetti({
                   particleCount: 100,
                   spread: 70,
@@ -168,7 +177,7 @@ export default function App() {
           setOrchestrationResult(fallbackData);
           setAgentStatuses(fallbackData.agentStatuses);
           setLogs(fallbackData.logs || []);
-          setActiveView('preview');
+          setWorkspaceTab('preview');
           confetti({
             particleCount: 80,
             spread: 60,
@@ -186,165 +195,186 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] text-[#1A1A1A] font-sans flex flex-col">
+    <div className="min-h-screen bg-[#F8F9FA] text-[#0F172A] font-sans flex flex-col antialiased">
       {/* Top Navigation */}
       <Navbar
+        currentViewMode={currentViewMode}
+        onToggleViewMode={setCurrentViewMode}
         onSelectSample={handleSelectSample}
         onOpenDocs={() => setIsDocsOpen(true)}
         isOrchestrating={isOrchestrating}
         hasResult={Boolean(orchestrationResult)}
-        onNewResume={() => setActiveView('editor')}
+        onNewResume={() => {
+          setCurrentViewMode('workspace');
+          setWorkspaceTab('editor');
+        }}
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Error notification banner */}
-        {errorMessage && (
-          <div className="mb-6 p-4 rounded-lg bg-white border border-[#FA5252] text-[#C92A2A] text-xs flex items-center justify-between shadow-xs">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-[#FA5252] shrink-0" />
-              <span>{errorMessage}</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => setErrorMessage(null)}
-              className="text-xs font-bold underline hover:no-underline"
-            >
-              Dismiss
-            </button>
-          </div>
-        )}
-
-        {/* Live Multi-Agent Execution Board (Always accessible or active during runs) */}
-        <AgentWorkflowBoard
-          agentStatuses={agentStatuses}
-          logs={logs}
-          isOrchestrating={isOrchestrating}
-          totalTimeMs={orchestrationResult?.totalExecutionTimeMs}
-        />
-
-        {/* View Switcher Tabs (when result is ready) */}
-        {orchestrationResult && (
-          <div className="flex items-center justify-between bg-white p-1.5 rounded-lg border border-[#E9ECEF] shadow-xs mb-6 overflow-x-auto">
-            <div className="flex items-center gap-1.5 text-xs font-semibold">
-              <button
-                type="button"
-                onClick={() => setActiveView('preview')}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded transition-all ${
-                  activeView === 'preview'
-                    ? 'bg-[#1A1A1A] text-white font-bold'
-                    : 'text-[#495057] hover:text-[#1A1A1A] hover:bg-[#F8F9FA]'
-                }`}
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>Resume Preview & PDF</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveView('ats_audit')}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded transition-all ${
-                  activeView === 'ats_audit'
-                    ? 'bg-[#1A1A1A] text-white font-bold'
-                    : 'text-[#495057] hover:text-[#1A1A1A] hover:bg-[#F8F9FA]'
-                }`}
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>ATS Audit ({orchestrationResult.atsAnalysis.overallScore}/100)</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveView('qa_report')}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded transition-all ${
-                  activeView === 'qa_report'
-                    ? 'bg-[#1A1A1A] text-white font-bold'
-                    : 'text-[#495057] hover:text-[#1A1A1A] hover:bg-[#F8F9FA]'
-                }`}
-              >
-                <Award className="w-3.5 h-3.5" />
-                <span>QA Report ({orchestrationResult.qaReport.overallQualityScore}/100)</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveView('editor')}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded transition-all ${
-                  activeView === 'editor'
-                    ? 'bg-[#1A1A1A] text-white font-bold'
-                    : 'text-[#495057] hover:text-[#1A1A1A] hover:bg-[#F8F9FA]'
-                }`}
-              >
-                <span>Edit Input Data</span>
-              </button>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleRunOrchestration}
-              disabled={isOrchestrating}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold bg-[#F8F9FA] text-[#1A1A1A] hover:bg-[#E9ECEF] border border-[#E9ECEF] transition-colors disabled:opacity-50"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isOrchestrating ? 'animate-spin' : ''}`} />
-              Re-Orchestrate
-            </button>
-          </div>
-        )}
-
-        {/* Dynamic View Rendering */}
-        {activeView === 'editor' ? (
-          <InputForm
-            formData={formData}
-            setFormData={setFormData}
-            onSubmit={handleRunOrchestration}
-            isOrchestrating={isOrchestrating}
-            onLoadSample={handleSelectSample}
+      <div className="flex-1 w-full">
+        {currentViewMode === 'landing' ? (
+          /* ==================================================== */
+          /* LANDING & DAG VISUALIZER VIEW */
+          /* ==================================================== */
+          <LandingView
+            onEnterStudio={handleEnterWorkspace}
+            onSelectSample={handleSelectSample}
+            onOpenDocs={() => setIsDocsOpen(true)}
           />
-        ) : activeView === 'preview' && orchestrationResult ? (
-          <ResumePreview
-            resume={orchestrationResult.resume}
-            markdownContent={orchestrationResult.markdownContent}
-            plainTextContent={orchestrationResult.plainTextContent}
-            atsAnalysis={orchestrationResult.atsAnalysis}
-            qaReport={orchestrationResult.qaReport}
-          />
-        ) : activeView === 'ats_audit' && orchestrationResult ? (
-          <div className="space-y-6">
-            <AtsAnalysisCard analysis={orchestrationResult.atsAnalysis} />
-            <ResumePreview
-              resume={orchestrationResult.resume}
-              markdownContent={orchestrationResult.markdownContent}
-              plainTextContent={orchestrationResult.plainTextContent}
+        ) : (
+          /* ==================================================== */
+          /* WORKSPACE / STUDIO VIEW */
+          /* ==================================================== */
+          <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {/* Error notification banner */}
+            {errorMessage && (
+              <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center justify-between shadow-2xs">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>{errorMessage}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setErrorMessage(null)}
+                  className="text-xs font-bold underline hover:no-underline cursor-pointer"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
+
+            {/* Live Multi-Agent Execution Board (Always accessible or active during runs) */}
+            <AgentWorkflowBoard
+              agentStatuses={agentStatuses}
+              logs={logs}
+              isOrchestrating={isOrchestrating}
+              totalTimeMs={orchestrationResult?.totalExecutionTimeMs}
             />
-          </div>
-        ) : activeView === 'qa_report' && orchestrationResult ? (
-          <div className="space-y-6">
-            <QAReportCard report={orchestrationResult.qaReport} />
-            <ResumePreview
-              resume={orchestrationResult.resume}
-              markdownContent={orchestrationResult.markdownContent}
-              plainTextContent={orchestrationResult.plainTextContent}
-            />
-          </div>
-        ) : null}
-      </main>
+
+            {/* View Switcher Tabs (when result is ready) */}
+            {orchestrationResult && (
+              <div className="flex flex-wrap items-center justify-between bg-white p-2 rounded-xl border border-slate-200 shadow-sm mb-6 gap-3">
+                <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => setWorkspaceTab('preview')}
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all cursor-pointer ${
+                      workspaceTab === 'preview'
+                        ? 'bg-slate-900 text-white font-bold shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>Resume Document & PDF</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setWorkspaceTab('ats_audit')}
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all cursor-pointer ${
+                      workspaceTab === 'ats_audit'
+                        ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>ATS Audit ({orchestrationResult.atsAnalysis.overallScore}/100)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setWorkspaceTab('qa_report')}
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all cursor-pointer ${
+                      workspaceTab === 'qa_report'
+                        ? 'bg-indigo-600 text-white font-bold shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Award className="w-3.5 h-3.5" />
+                    <span>QA Certification ({orchestrationResult.qaReport.overallQualityScore}/100)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setWorkspaceTab('editor')}
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all cursor-pointer ${
+                      workspaceTab === 'editor'
+                        ? 'bg-slate-200 text-slate-900 font-bold shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <span>Edit Profile Data</span>
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleRunOrchestration()}
+                  disabled={isOrchestrating}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-slate-50 text-slate-900 hover:bg-slate-100 border border-slate-200 transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isOrchestrating ? 'animate-spin' : ''}`} />
+                  <span>Re-Run 5 Agents</span>
+                </button>
+              </div>
+            )}
+
+            {/* Dynamic View Rendering */}
+            {workspaceTab === 'editor' ? (
+              <InputForm
+                formData={formData}
+                setFormData={setFormData}
+                onSubmit={handleRunOrchestration}
+                isOrchestrating={isOrchestrating}
+                onLoadSample={handleSelectSample}
+              />
+            ) : workspaceTab === 'preview' && orchestrationResult ? (
+              <ResumePreview
+                resume={orchestrationResult.resume}
+                markdownContent={orchestrationResult.markdownContent}
+                plainTextContent={orchestrationResult.plainTextContent}
+                atsAnalysis={orchestrationResult.atsAnalysis}
+                qaReport={orchestrationResult.qaReport}
+              />
+            ) : workspaceTab === 'ats_audit' && orchestrationResult ? (
+              <div className="space-y-6">
+                <AtsAnalysisCard analysis={orchestrationResult.atsAnalysis} />
+                <ResumePreview
+                  resume={orchestrationResult.resume}
+                  markdownContent={orchestrationResult.markdownContent}
+                  plainTextContent={orchestrationResult.plainTextContent}
+                />
+              </div>
+            ) : workspaceTab === 'qa_report' && orchestrationResult ? (
+              <div className="space-y-6">
+                <QAReportCard report={orchestrationResult.qaReport} />
+                <ResumePreview
+                  resume={orchestrationResult.resume}
+                  markdownContent={orchestrationResult.markdownContent}
+                  plainTextContent={orchestrationResult.plainTextContent}
+                />
+              </div>
+            ) : null}
+          </main>
+        )}
+      </div>
 
       {/* Footer */}
-      <footer className="mt-auto bg-white border-t border-[#E9ECEF] py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#868E96]">
+      <footer className="mt-auto bg-white border-t border-slate-200 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-[#1A1A1A]">CrewMyResume</span>
+            <span className="font-bold text-slate-900">CrewMyResume</span>
             <span>&bull;</span>
-            <span>Multi-Agent AI Resume Generation & Optimization</span>
+            <span>Multi-Agent Autonomous Resume Orchestration Platform</span>
           </div>
 
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={() => setIsDocsOpen(true)}
-              className="hover:text-[#1A1A1A] transition-colors"
+              className="hover:text-indigo-600 transition-colors font-medium cursor-pointer"
             >
-              Architecture & Agent Roles
+              Architecture & DAG Specs
             </button>
             <span>&bull;</span>
             <span>CrewAI & LangChain Orchestration</span>
