@@ -24,6 +24,8 @@ import {
   Globe,
   Share2,
   Printer,
+  Sparkles,
+  FileJson,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -36,21 +38,23 @@ interface ResumePreviewProps {
 }
 
 const COLOR_OPTIONS = [
-  { name: 'Indigo / Tech', value: '#4f46e5' },
+  { name: 'Indigo / Tech', value: '#4F46E5' },
   { name: 'Emerald / Growth', value: '#059669' },
-  { name: 'Navy / Executive', value: '#1e3a8a' },
-  { name: 'Teal / Nordic', value: '#0d9488' },
-  { name: 'Slate / Monochrome', value: '#334155' },
+  { name: 'Navy / Executive', value: '#1E3A8A' },
+  { name: 'Teal / Nordic', value: '#0D9488' },
+  { name: 'Obsidian / Slate', value: '#0F172A' },
 ];
 
 export const ResumePreview: React.FC<ResumePreviewProps> = ({
   resume,
   markdownContent,
   plainTextContent,
+  atsAnalysis,
+  qaReport,
 }) => {
   const [customization, setCustomization] = useState<TemplateCustomization>({
     templateId: 'modern',
-    accentColor: '#4f46e5',
+    accentColor: '#4F46E5',
     fontFamily: 'sans',
     spacingDensity: 'balanced',
     showBorders: true,
@@ -107,8 +111,8 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
   const densityStyles = {
     compact: {
       pad: 'p-6 sm:p-8',
-      gap: 'space-y-4',
-      sectionGap: 'space-y-2',
+      gap: 'space-y-3.5',
+      sectionGap: 'space-y-1.5',
       bulletGap: 'space-y-1',
       fontSize: 'text-xs',
     },
@@ -132,19 +136,19 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
   const fontClass = {
     sans: 'font-sans',
     serif: 'font-serif',
-    mono: 'font-mono',
+    mono: 'font-mono-code',
   }[customization.fontFamily];
 
   return (
     <div className="space-y-6">
       {/* Top Toolbar & Customization Controls */}
-      <div className="bg-white rounded-lg border border-[#E9ECEF] p-4 shadow-xs flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm flex flex-wrap items-center justify-between gap-4">
         {/* Template Selector */}
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-[#868E96] uppercase tracking-wider flex items-center gap-1">
-            <Layout className="w-3.5 h-3.5 text-[#1A1A1A]" /> Template:
+          <span className="text-xs font-mono-code font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+            <Layout className="w-3.5 h-3.5 text-indigo-600" /> Template:
           </span>
-          <div className="flex bg-[#F8F9FA] p-1 rounded border border-[#E9ECEF] text-xs">
+          <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs">
             {(
               [
                 { id: 'modern', label: 'Modern Clean' },
@@ -163,10 +167,10 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
                     fontFamily: tpl.id === 'executive' ? 'serif' : tpl.id === 'minimal' ? 'mono' : 'sans',
                   });
                 }}
-                className={`px-3 py-1 rounded font-medium transition-all ${
+                className={`px-3 py-1 rounded-md font-medium transition-all cursor-pointer ${
                   customization.templateId === tpl.id
-                    ? 'bg-[#1A1A1A] text-white font-semibold'
-                    : 'text-[#495057] hover:text-[#1A1A1A]'
+                    ? 'bg-slate-900 text-white font-bold shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {tpl.label}
@@ -176,10 +180,10 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
         </div>
 
         {/* Color Picker & Spacing */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
-            <Palette className="w-3.5 h-3.5 text-[#868E96]" />
-            <div className="flex items-center gap-1">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Palette className="w-3.5 h-3.5 text-slate-400" />
+            <div className="flex items-center gap-1.5">
               {COLOR_OPTIONS.map((c) => (
                 <button
                   key={c.value}
@@ -187,17 +191,17 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
                   title={c.name}
                   onClick={() => setCustomization({ ...customization, accentColor: c.value })}
                   style={{ backgroundColor: c.value }}
-                  className={`w-5 h-5 rounded-full transition-transform ${
+                  className={`w-5 h-5 rounded-full transition-transform cursor-pointer ${
                     customization.accentColor === c.value
-                      ? 'ring-2 ring-offset-2 ring-[#1A1A1A] scale-110'
-                      : 'hover:scale-105'
+                      ? 'ring-2 ring-offset-2 ring-slate-900 scale-110'
+                      : 'hover:scale-105 opacity-80 hover:opacity-100'
                   }`}
                 />
               ))}
             </div>
           </div>
 
-          <div className="h-4 w-px bg-[#E9ECEF]"></div>
+          <div className="h-4 w-px bg-slate-200 hidden sm:block" />
 
           {/* Density Selector */}
           <select
@@ -208,11 +212,11 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
                 spacingDensity: e.target.value as TemplateCustomization['spacingDensity'],
               })
             }
-            className="text-xs bg-[#F8F9FA] border border-[#E9ECEF] rounded px-2.5 py-1 text-[#212529] outline-none"
+            className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-slate-800 outline-none font-medium cursor-pointer"
           >
-            <option value="compact">Compact (1 Page)</option>
+            <option value="compact">Compact (1-Page Target)</option>
             <option value="balanced">Balanced (Standard)</option>
-            <option value="spacious">Spacious (2 Pages)</option>
+            <option value="spacious">Spacious (2-Page Flow)</option>
           </select>
         </div>
 
@@ -221,55 +225,77 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
           <button
             type="button"
             onClick={handleCopyPlainText}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded border border-[#E9ECEF] bg-[#F8F9FA] text-[#212529] hover:bg-[#E9ECEF] transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-[#2B8A3E]" /> : <Copy className="w-3.5 h-3.5" />}
-            <span>{copied ? 'Copied Text' : 'Copy Text'}</span>
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+            <span>{copied ? 'Copied' : 'Copy Text'}</span>
           </button>
 
           <button
             type="button"
             onClick={handleDownloadMarkdown}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded border border-[#E9ECEF] bg-[#F8F9FA] text-[#212529] hover:bg-[#E9ECEF] transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+            title="Download formatted Markdown"
           >
-            <FileCode className="w-3.5 h-3.5 text-[#1A1A1A]" />
-            <span>Markdown</span>
+            <FileCode className="w-3.5 h-3.5 text-slate-700" />
+            <span className="hidden sm:inline">Markdown</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleDownloadJson}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+            title="Export raw JSON schema"
+          >
+            <FileJson className="w-3.5 h-3.5 text-slate-700" />
+            <span className="hidden sm:inline">JSON</span>
           </button>
 
           <button
             type="button"
             onClick={handleExportPdf}
             disabled={isExportingPdf}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded bg-[#1A1A1A] hover:bg-black text-white transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
           >
             {isExportingPdf ? (
               <>
-                <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                Generating PDF...
+                <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Exporting...</span>
               </>
             ) : (
               <>
                 <Download className="w-3.5 h-3.5" />
-                Download PDF
+                <span>Download PDF</span>
               </>
             )}
           </button>
         </div>
       </div>
 
-      {/* The Printable Resume Container */}
-      <div className="overflow-x-auto pb-4">
+      {/* The Authentic Document Simulation Paper Container */}
+      <div className="overflow-x-auto pb-8 pt-2">
         <div
           id="resume-document-container"
-          className={`mx-auto bg-white text-[#212529] shadow-sm rounded-lg border border-[#E9ECEF] max-w-[850px] min-h-[1100px] ${densityStyles.pad} ${densityStyles.gap} ${fontClass} leading-normal transition-all`}
+          className={`mx-auto bg-white text-[#0F172A] resume-paper-shadow rounded-xl border border-slate-200 max-w-[850px] min-h-[1100px] ${densityStyles.pad} ${densityStyles.gap} ${fontClass} leading-normal transition-all`}
         >
           {/* ==================================================== */}
           {/* HEADER SECTION */}
           {/* ==================================================== */}
-          <div className="border-b pb-4 space-y-2" style={{ borderColor: `${customization.accentColor}30` }}>
-            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+          <div
+            className={`border-b pb-4 space-y-2 ${
+              customization.templateId === 'executive' ? 'text-center' : ''
+            }`}
+            style={{ borderColor: `${customization.accentColor}30` }}
+          >
+            <div
+              className={`flex flex-col ${
+                customization.templateId === 'executive'
+                  ? 'items-center justify-center'
+                  : 'sm:flex-row sm:items-baseline justify-between gap-1'
+              }`}
+            >
               <h1
-                className="text-2xl sm:text-3xl font-extrabold tracking-tight"
+                className="text-2xl sm:text-3xl font-black tracking-tight"
                 style={{ color: customization.accentColor }}
               >
                 {p.fullName}
@@ -278,7 +304,11 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
             </div>
 
             {/* Contact details row */}
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-600 font-medium">
+            <div
+              className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 font-medium ${
+                customization.templateId === 'executive' ? 'justify-center' : ''
+              }`}
+            >
               {p.email && (
                 <div className="flex items-center gap-1">
                   <Mail className="w-3 h-3 text-slate-400" />
@@ -324,10 +354,10 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
           {resume.summary && (
             <div className={densityStyles.sectionGap}>
               <h2
-                className="text-xs font-bold uppercase tracking-wider border-b pb-1"
+                className="text-xs font-bold uppercase tracking-wider border-b pb-1 font-mono-code"
                 style={{ color: customization.accentColor, borderColor: `${customization.accentColor}25` }}
               >
-                Professional Summary
+                Executive Summary
               </h2>
               <p className={`${densityStyles.fontSize} text-slate-700 leading-relaxed text-justify`}>
                 {resume.summary}
@@ -341,7 +371,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
           {resume.experience && resume.experience.length > 0 && (
             <div className={densityStyles.sectionGap}>
               <h2
-                className="text-xs font-bold uppercase tracking-wider border-b pb-1"
+                className="text-xs font-bold uppercase tracking-wider border-b pb-1 font-mono-code"
                 style={{ color: customization.accentColor, borderColor: `${customization.accentColor}25` }}
               >
                 Professional Experience
@@ -354,7 +384,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
                         <span className="font-bold text-slate-900 text-sm sm:text-xs">{exp.position}</span>
                         <span className="text-slate-600 font-medium"> &mdash; {exp.company}</span>
                       </div>
-                      <div className="text-[11px] text-slate-500 font-medium">
+                      <div className="text-[11px] text-slate-500 font-mono-code">
                         <span>
                           {exp.startDate} &ndash; {exp.endDate}
                         </span>
@@ -379,7 +409,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
           {resume.projects && resume.projects.length > 0 && (
             <div className={densityStyles.sectionGap}>
               <h2
-                className="text-xs font-bold uppercase tracking-wider border-b pb-1"
+                className="text-xs font-bold uppercase tracking-wider border-b pb-1 font-mono-code"
                 style={{ color: customization.accentColor, borderColor: `${customization.accentColor}25` }}
               >
                 Key Projects & Technical Initiatives
@@ -398,7 +428,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
                         )}
                       </div>
                       {proj.technologies && proj.technologies.length > 0 && (
-                        <span className="text-[11px] text-slate-500 font-mono">
+                        <span className="text-[11px] text-slate-500 font-mono-code">
                           [{proj.technologies.join(', ')}]
                         </span>
                       )}
@@ -421,7 +451,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
           {resume.skills && (
             <div className={densityStyles.sectionGap}>
               <h2
-                className="text-xs font-bold uppercase tracking-wider border-b pb-1"
+                className="text-xs font-bold uppercase tracking-wider border-b pb-1 font-mono-code"
                 style={{ color: customization.accentColor, borderColor: `${customization.accentColor}25` }}
               >
                 Technical & Core Competencies
@@ -461,7 +491,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
           {resume.education && resume.education.length > 0 && (
             <div className={densityStyles.sectionGap}>
               <h2
-                className="text-xs font-bold uppercase tracking-wider border-b pb-1"
+                className="text-xs font-bold uppercase tracking-wider border-b pb-1 font-mono-code"
                 style={{ color: customization.accentColor, borderColor: `${customization.accentColor}25` }}
               >
                 Education
@@ -476,7 +506,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
                       <span className="text-slate-600"> &mdash; {edu.institution}</span>
                       {edu.honors && <span className="text-slate-500 italic"> ({edu.honors})</span>}
                     </div>
-                    <div className="text-[11px] text-slate-500">
+                    <div className="text-[11px] text-slate-500 font-mono-code">
                       <span>
                         {edu.startDate} &ndash; {edu.endDate}
                       </span>
@@ -494,7 +524,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
           {resume.certifications && resume.certifications.length > 0 && (
             <div className={densityStyles.sectionGap}>
               <h2
-                className="text-xs font-bold uppercase tracking-wider border-b pb-1"
+                className="text-xs font-bold uppercase tracking-wider border-b pb-1 font-mono-code"
                 style={{ color: customization.accentColor, borderColor: `${customization.accentColor}25` }}
               >
                 Certifications & Accreditations
@@ -506,7 +536,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
                       <span className="font-semibold text-slate-900">{cert.name}</span>
                       <span className="text-slate-500"> &mdash; {cert.issuer}</span>
                     </div>
-                    <span className="text-[11px] text-slate-500">{cert.date}</span>
+                    <span className="text-[11px] text-slate-500 font-mono-code">{cert.date}</span>
                   </div>
                 ))}
               </div>
