@@ -19,14 +19,10 @@ import { AgentWorkflowBoard } from './components/AgentWorkflowBoard.js';
 import { ResumePreview } from './components/ResumePreview.js';
 import { AtsAnalysisCard } from './components/AtsAnalysisCard.js';
 import { QAReportCard } from './components/QAReportCard.js';
-import { SAMPLE_PROFILES } from '../server/sampleData.js';
 import {
-  Sparkles,
   FileText,
   ShieldCheck,
   Award,
-  Layers,
-  ArrowRight,
   RefreshCw,
   AlertCircle,
 } from 'lucide-react';
@@ -75,9 +71,31 @@ const INITIAL_AGENT_STATUSES: Record<AgentRoleType, AgentStatus> = {
   },
 };
 
+const EMPTY_RESUME: UserResumeInput = {
+  targetJobTitle: '',
+  targetIndustry: '',
+  jobDescription: '',
+  personalInfo: {
+    fullName: '',
+    jobTitle: '',
+    email: '',
+    phone: '',
+    location: '',
+    linkedin: '',
+    github: '',
+    website: '',
+  },
+  summary: '',
+  experience: [],
+  education: [],
+  skills: { technical: [], frameworksAndTools: [], softSkills: [], languages: [] },
+  projects: [],
+  certifications: [],
+};
+
 export default function App() {
   const [currentViewMode, setCurrentViewMode] = useState<'landing' | 'workspace'>('landing');
-  const [formData, setFormData] = useState<UserResumeInput>(SAMPLE_PROFILES.software_engineer);
+  const [formData, setFormData] = useState<UserResumeInput>(EMPTY_RESUME);
   const [isOrchestrating, setIsOrchestrating] = useState(false);
   const [orchestrationResult, setOrchestrationResult] = useState<OrchestrationResult | null>(null);
   const [agentStatuses, setAgentStatuses] = useState<Record<AgentRoleType, AgentStatus>>(INITIAL_AGENT_STATUSES);
@@ -85,14 +103,6 @@ export default function App() {
   const [workspaceTab, setWorkspaceTab] = useState<'editor' | 'preview' | 'ats_audit' | 'qa_report'>('editor');
   const [isDocsOpen, setIsDocsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const handleSelectSample = (profileKey: string) => {
-    if (SAMPLE_PROFILES[profileKey]) {
-      setFormData(SAMPLE_PROFILES[profileKey]);
-      setCurrentViewMode('workspace');
-      setWorkspaceTab('editor');
-    }
-  };
 
   const handleEnterWorkspace = () => {
     setCurrentViewMode('workspace');
@@ -195,13 +205,11 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] text-[#0F172A] font-sans flex flex-col antialiased">
+    <div className="min-h-screen bg-[#F4F5F0] text-[#0F172A] font-sans flex flex-col antialiased">
       {/* Top Navigation */}
       <Navbar
         currentViewMode={currentViewMode}
         onToggleViewMode={setCurrentViewMode}
-        onSelectSample={handleSelectSample}
-        onOpenDocs={() => setIsDocsOpen(true)}
         isOrchestrating={isOrchestrating}
         hasResult={Boolean(orchestrationResult)}
         onNewResume={() => {
@@ -218,8 +226,6 @@ export default function App() {
           /* ==================================================== */
           <LandingView
             onEnterStudio={handleEnterWorkspace}
-            onSelectSample={handleSelectSample}
-            onOpenDocs={() => setIsDocsOpen(true)}
           />
         ) : (
           /* ==================================================== */
@@ -244,12 +250,14 @@ export default function App() {
             )}
 
             {/* Live Multi-Agent Execution Board (Always accessible or active during runs) */}
-            <AgentWorkflowBoard
-              agentStatuses={agentStatuses}
-              logs={logs}
-              isOrchestrating={isOrchestrating}
-              totalTimeMs={orchestrationResult?.totalExecutionTimeMs}
-            />
+            {isOrchestrating && (
+              <AgentWorkflowBoard
+                agentStatuses={agentStatuses}
+                logs={logs}
+                isOrchestrating={isOrchestrating}
+                totalTimeMs={orchestrationResult?.totalExecutionTimeMs}
+              />
+            )}
 
             {/* View Switcher Tabs (when result is ready) */}
             {orchestrationResult && (
@@ -286,7 +294,7 @@ export default function App() {
                     onClick={() => setWorkspaceTab('qa_report')}
                     className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg transition-all cursor-pointer ${
                       workspaceTab === 'qa_report'
-                        ? 'bg-indigo-600 text-white font-bold shadow-xs'
+                        ? 'bg-emerald-700 text-white font-bold shadow-xs'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                     }`}
                   >
@@ -326,7 +334,6 @@ export default function App() {
                 setFormData={setFormData}
                 onSubmit={handleRunOrchestration}
                 isOrchestrating={isOrchestrating}
-                onLoadSample={handleSelectSample}
               />
             ) : workspaceTab === 'preview' && orchestrationResult ? (
               <ResumePreview
@@ -364,20 +371,17 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div className="flex items-center gap-2">
             <span className="font-bold text-slate-900">CrewMyResume</span>
-            <span>&bull;</span>
-            <span>Multi-Agent Autonomous Resume Orchestration Platform</span>
+            <span>Make a resume you feel good about.</span>
           </div>
 
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={() => setIsDocsOpen(true)}
-              className="hover:text-indigo-600 transition-colors font-medium cursor-pointer"
+              className="hover:text-emerald-700 transition-colors font-medium cursor-pointer"
             >
-              Architecture & DAG Specs
+              How it works
             </button>
-            <span>&bull;</span>
-            <span>CrewAI & LangChain Orchestration</span>
           </div>
         </div>
       </footer>

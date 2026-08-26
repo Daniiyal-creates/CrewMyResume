@@ -38,10 +38,10 @@ interface ResumePreviewProps {
 }
 
 const COLOR_OPTIONS = [
-  { name: 'Indigo / Tech', value: '#4F46E5' },
+  { name: 'Emerald / Focus', value: '#047857' },
   { name: 'Emerald / Growth', value: '#059669' },
-  { name: 'Navy / Executive', value: '#1E3A8A' },
-  { name: 'Teal / Nordic', value: '#0D9488' },
+  { name: 'Moss / Calm', value: '#4D7C0F' },
+  { name: 'Sage / Nordic', value: '#0F766E' },
   { name: 'Obsidian / Slate', value: '#0F172A' },
 ];
 
@@ -54,7 +54,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
 }) => {
   const [customization, setCustomization] = useState<TemplateCustomization>({
     templateId: 'modern',
-    accentColor: '#4F46E5',
+    accentColor: '#047857',
     fontFamily: 'sans',
     spacingDensity: 'balanced',
     showBorders: true,
@@ -146,7 +146,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
         {/* Template Selector */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-mono-code font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-            <Layout className="w-3.5 h-3.5 text-indigo-600" /> Template:
+            <Layout className="w-3.5 h-3.5 text-emerald-700" /> Template:
           </span>
           <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs">
             {(
@@ -255,7 +255,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
             type="button"
             onClick={handleExportPdf}
             disabled={isExportingPdf}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
           >
             {isExportingPdf ? (
               <>
@@ -422,7 +422,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({
                         <span className="font-bold text-slate-900">{proj.name}</span>
                         {proj.role && <span className="text-slate-500 italic">({proj.role})</span>}
                         {proj.link && (
-                          <span className="text-[11px] text-indigo-600 font-medium">
+                          <span className="text-[11px] text-emerald-700 font-medium">
                             {proj.link.replace(/^https?:\/\//, '')}
                           </span>
                         )}

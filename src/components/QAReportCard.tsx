@@ -12,13 +12,13 @@ export const QAReportCard: React.FC<QAReportCardProps> = ({ report }) => {
       {/* Header with Recruiter Seal */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 shadow-2xs">
+          <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 shadow-2xs">
             <Award className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-slate-900">Quality Assurance Agent Certification</h3>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono-code font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono-code font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
                 Official QA Seal
               </span>
             </div>
@@ -31,7 +31,7 @@ export const QAReportCard: React.FC<QAReportCardProps> = ({ report }) => {
         {/* Quality Score Badge */}
         <div className="px-5 py-3 rounded-xl border border-slate-200 bg-slate-50/80 flex items-center gap-4 text-slate-900">
           <div>
-            <div className="text-3xl font-black tracking-tight leading-none font-mono-code text-indigo-600">
+            <div className="text-3xl font-black tracking-tight leading-none font-mono-code text-emerald-700">
               {report.overallQualityScore}
               <span className="text-xs font-normal text-slate-400">/100</span>
             </div>
@@ -39,7 +39,7 @@ export const QAReportCard: React.FC<QAReportCardProps> = ({ report }) => {
               Recruiter QA Index
             </div>
           </div>
-          <ShieldCheck className="w-6 h-6 text-indigo-600 shrink-0" />
+          <ShieldCheck className="w-6 h-6 text-emerald-700 shrink-0" />
         </div>
       </div>
 
@@ -72,7 +72,7 @@ export const QAReportCard: React.FC<QAReportCardProps> = ({ report }) => {
       {report.detectedIssues && report.detectedIssues.length > 0 && (
         <div className="space-y-3">
           <h4 className="text-xs font-mono-code font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
-            <FileCheck className="w-4 h-4 text-indigo-600" />
+            <FileCheck className="w-4 h-4 text-emerald-700" />
             Automated QA Refinements & Fixes Applied
           </h4>
           <div className="space-y-2">
@@ -102,9 +102,9 @@ export const QAReportCard: React.FC<QAReportCardProps> = ({ report }) => {
       )}
 
       {/* QA Executive Feedback Banner */}
-      <div className="p-5 rounded-xl bg-indigo-50/50 border border-indigo-100 text-xs text-slate-800 space-y-1.5">
-        <div className="font-bold text-indigo-950 flex items-center gap-2 font-mono-code uppercase tracking-wider text-[11px]">
-          <Sparkles className="w-4 h-4 text-indigo-600" />
+      <div className="p-5 rounded-xl bg-emerald-50/50 border border-emerald-100 text-xs text-slate-800 space-y-1.5">
+        <div className="font-bold text-emerald-950 flex items-center gap-2 font-mono-code uppercase tracking-wider text-[11px]">
+          <Sparkles className="w-4 h-4 text-emerald-700" />
           Senior Recruiter Editorial Summary
         </div>
         <p className="text-slate-700 leading-relaxed text-xs">

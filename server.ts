@@ -1,9 +1,10 @@
+import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import { CrewOrchestrator } from './server/agents/crew.js';
-import { SAMPLE_PROFILES } from './server/sampleData.js';
 import { AGENT_DEFINITIONS } from './server/agents/definitions.js';
+import { getGeminiClient } from './server/gemini.js';
 
 async function startServer() {
   const app = express();
@@ -35,9 +36,50 @@ async function startServer() {
     });
   });
 
-  // API Route: Sample Data
-  app.get('/api/sample-data', (_req, res) => {
-    res.json({ profiles: SAMPLE_PROFILES });
+  app.post('/api/parse-resume', async (req, res) => {
+    try {
+      const text = typeof req.body?.text === 'string' ? req.body.text.trim() : '';
+      if (!text) {
+        return res.status(400).json({ error: 'No readable text was found in this PDF.' });
+      }
+
+      const gemini = getGeminiClient();
+      if (!gemini) {
+        return res.status(503).json({ error: 'Resume parsing needs a configured Gemini API key.' });
+      }
+
+      const response = await gemini.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: `Extract the candidate information from this resume text and return only valid JSON. Do not invent details. Use empty strings or empty arrays when a field is not present.
+
+Resume text:
+${text}
+
+Return this exact shape:
+{
+  "targetJobTitle": "",
+  "targetIndustry": "",
+  "jobDescription": "",
+  "personalInfo": { "fullName": "", "jobTitle": "", "email": "", "phone": "", "location": "", "linkedin": "", "github": "", "website": "" },
+  "summary": "",
+  "experience": [{ "id": "", "company": "", "position": "", "location": "", "startDate": "", "endDate": "", "current": false, "description": "", "highlights": [] }],
+  "education": [{ "id": "", "institution": "", "degree": "", "fieldOfStudy": "", "location": "", "startDate": "", "endDate": "", "gpa": "", "honors": "" }],
+  "skills": { "technical": [], "frameworksAndTools": [], "softSkills": [], "languages": [] },
+  "projects": [{ "id": "", "name": "", "role": "", "link": "", "technologies": [], "description": "", "highlights": [] }],
+  "certifications": [{ "id": "", "name": "", "issuer": "", "date": "", "credentialId": "" }]
+}`,
+        config: {
+          responseMimeType: 'application/json',
+          systemInstruction: 'You are a careful resume data extraction assistant. Preserve facts exactly and never create missing experience, dates, employers, metrics, or skills.',
+        },
+      });
+
+      const profile = JSON.parse(response.text || '{}');
+      return res.json({ profile });
+    } catch (err: any) {
+      console.error('Resume parsing error:', err);
+      return res.status(500).json({ error: err.message || 'Unable to parse this resume.' });
+    }
   });
 
   // API Route: Standard Orchestration

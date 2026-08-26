@@ -16,13 +16,13 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
         {/* Header */}
         <div className="sticky top-0 z-10 bg-slate-900 text-white px-6 py-5 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3.5">
-            <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-emerald-700 flex items-center justify-center text-white shadow-xs">
               <Layers className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-white">CrewMyResume Architecture & Orchestration</h2>
-                <span className="text-[10px] font-mono-code font-bold uppercase px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                <span className="text-[10px] font-mono-code font-bold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                   CrewAI + LangChain
                 </span>
               </div>
@@ -42,15 +42,15 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
           {/* Section 1: DAG Flow */}
           <div>
             <h3 className="text-xs font-mono-code font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-2">
-              <GitFork className="w-4 h-4 text-indigo-600" />
+              <GitFork className="w-4 h-4 text-emerald-700" />
               1. Multi-Agent Task Dependency Graph
             </h3>
             <div className="bg-[#0C0E14] text-white rounded-xl p-5 border border-slate-800 overflow-x-auto">
               <div className="flex flex-col md:flex-row items-center justify-between gap-3 min-w-[650px] text-xs">
                 {/* Step 1 */}
-                <div className="flex-1 bg-[#121620] p-3.5 rounded-lg border border-blue-500/30">
-                  <div className="flex items-center gap-2 font-bold text-blue-400 mb-1 font-mono-code">
-                    <span className="w-4 h-4 rounded bg-blue-500/20 flex items-center justify-center text-[10px]">1</span>
+                <div className="flex-1 bg-[#121620] p-3.5 rounded-lg border border-emerald-500/30">
+                  <div className="flex items-center gap-2 font-bold text-emerald-400 mb-1 font-mono-code">
+                    <span className="w-4 h-4 rounded bg-emerald-500/20 flex items-center justify-center text-[10px]">1</span>
                     Analyzer Agent
                   </div>
                   <p className="text-[11px] text-slate-400">Sequential: Normalizes taxonomy & career timeline into typed schema</p>
@@ -60,9 +60,9 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
 
                 {/* Step 2 Parallel */}
                 <div className="flex-1 space-y-2">
-                  <div className="bg-[#121620] p-2.5 rounded-lg border border-purple-500/30">
-                    <div className="flex items-center gap-1.5 font-bold text-purple-400 font-mono-code text-[11px]">
-                      <span className="w-4 h-4 rounded bg-purple-500/20 flex items-center justify-center text-[9px]">2A</span>
+                  <div className="bg-[#121620] p-2.5 rounded-lg border border-teal-500/30">
+                    <div className="flex items-center gap-1.5 font-bold text-teal-400 font-mono-code text-[11px]">
+                      <span className="w-4 h-4 rounded bg-teal-500/20 flex items-center justify-center text-[9px]">2A</span>
                       Strategist (Google XYZ)
                     </div>
                   </div>
@@ -103,7 +103,7 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
           {/* Section 2: Agent Specs Grid */}
           <div>
             <h3 className="text-xs font-mono-code font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-2">
-              <Bot className="w-4 h-4 text-indigo-600" />
+              <Bot className="w-4 h-4 text-emerald-700" />
               2. Agent Roles, Directives & Named Tools
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
@@ -113,7 +113,7 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
                   <div key={agent.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Icon className="w-4 h-4 text-indigo-600" />
+                        <Icon className="w-4 h-4 text-emerald-700" />
                         <span className="font-bold text-slate-900 font-mono-code">{agent.name}</span>
                       </div>
                       <span className="px-2 py-0.5 rounded bg-white text-slate-700 font-semibold text-[10px] font-mono-code border border-slate-200">
@@ -125,7 +125,7 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
                     </p>
                     <div className="flex flex-wrap gap-1.5 pt-1">
                       {agent.tools.map((t, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded bg-white text-indigo-900 border border-indigo-200 font-mono-code text-[10px]">
+                        <span key={i} className="px-2 py-0.5 rounded bg-white text-emerald-900 border border-emerald-200 font-mono-code text-[10px]">
                           ⚡ {t}
                         </span>
                       ))}
@@ -137,15 +137,15 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
           </div>
 
           {/* Section 3: Google XYZ Formula */}
-          <div className="p-5 rounded-xl bg-indigo-50/70 border border-indigo-100 space-y-2">
-            <h4 className="font-bold text-indigo-950 font-mono-code text-xs uppercase tracking-wider flex items-center gap-2">
-              <Zap className="w-4 h-4 text-indigo-600" />
+          <div className="p-5 rounded-xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <h4 className="font-bold text-emerald-950 font-mono-code text-xs uppercase tracking-wider flex items-center gap-2">
+              <Zap className="w-4 h-4 text-emerald-700" />
               3. The Google XYZ Formula Implementation
             </h4>
             <p className="text-slate-700 text-xs leading-relaxed">
               Every bullet point produced by the <strong>Content Strategist Agent</strong> strictly adheres to the standard established by Laszlo Bock (former VP of People Operations at Google):
             </p>
-            <div className="p-3 bg-white rounded-lg border border-indigo-200 font-mono-code text-xs text-indigo-900 font-semibold">
+            <div className="p-3 bg-white rounded-lg border border-emerald-200 font-mono-code text-xs text-emerald-900 font-semibold">
               &quot;Accomplished [X], as measured by [Y], by doing [Z]&quot;
             </div>
             <p className="text-[11px] text-slate-500">

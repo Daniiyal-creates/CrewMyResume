@@ -16,14 +16,16 @@ import {
   HelpCircle,
   Zap,
   CheckCircle2,
+  Upload,
+  LoaderCircle,
 } from 'lucide-react';
+import { extractPdfText } from '../utils/pdfParser.js';
 
 interface InputFormProps {
   formData: UserResumeInput;
   setFormData: React.Dispatch<React.SetStateAction<UserResumeInput>>;
   onSubmit: (e: React.FormEvent) => void;
   isOrchestrating: boolean;
-  onLoadSample: (key: string) => void;
 }
 
 type TabType = 'target' | 'personal' | 'experience' | 'skills' | 'education' | 'projects' | 'certifications';
@@ -33,9 +35,10 @@ export const InputForm: React.FC<InputFormProps> = ({
   setFormData,
   onSubmit,
   isOrchestrating,
-  onLoadSample,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>('target');
+  const [isParsingResume, setIsParsingResume] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState<string | null>(null);
 
   // Input helper handlers
   const updatePersonalInfo = (field: string, value: string) => {
@@ -215,6 +218,38 @@ export const InputForm: React.FC<InputFormProps> = ({
     }));
   };
 
+  const handleResumeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    setUploadMessage(null);
+    setIsParsingResume(true);
+    try {
+      const text = await extractPdfText(file);
+      const response = await fetch('/api/parse-resume', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Unable to parse this resume.');
+
+      setFormData((previous) => ({
+        ...previous,
+        ...result.profile,
+        personalInfo: { ...previous.personalInfo, ...result.profile.personalInfo },
+        skills: { ...previous.skills, ...result.profile.skills },
+      }));
+      setActiveTab('personal');
+      setUploadMessage('Your resume was imported. Please review the details before creating your new resume.');
+    } catch (error: any) {
+      setUploadMessage(error.message || 'We could not read that PDF. You can still enter your details manually.');
+    } finally {
+      setIsParsingResume(false);
+    }
+  };
+
   const tabs: Array<{ id: TabType; label: string; icon: React.ReactNode; count?: number }> = [
     { id: 'target', label: 'Target Job & JD', icon: <Target className="w-4 h-4" /> },
     { id: 'personal', label: 'Contact Info', icon: <User className="w-4 h-4" /> },
@@ -226,64 +261,47 @@ export const InputForm: React.FC<InputFormProps> = ({
   ];
 
   return (
-    <form onSubmit={onSubmit} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <form onSubmit={onSubmit} noValidate className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
       {/* Form top banner & trigger button */}
       <div className="p-6 bg-white border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-base font-bold tracking-tight text-slate-900">
-              Candidate Profile & Job Target Specifications
+              Your resume details
             </h2>
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono-code font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-100">
+            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono-code font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100">
               Studio Input
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Fill in candidate details or load a sample preset, then launch the 5 autonomous agents.
+            Add what you know. You can leave optional sections blank and come back to them later.
           </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800 transition-colors hover:bg-emerald-100">
+              {isParsingResume ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+              <span>{isParsingResume ? 'Reading your PDF...' : 'Upload your CV (PDF)'}</span>
+              <input type="file" accept="application/pdf,.pdf" onChange={handleResumeUpload} disabled={isParsingResume} className="sr-only" />
+            </label>
+            <span className="text-[11px] text-slate-500">We will fill the form for you to review.</span>
+          </div>
+          {uploadMessage && <p className="mt-2 max-w-2xl text-xs text-emerald-700">{uploadMessage}</p>}
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          {/* Quick presets pills */}
-          <div className="hidden sm:flex items-center gap-1 text-xs text-slate-500">
-            <span className="text-[10px] font-mono-code uppercase font-bold text-slate-400">Presets:</span>
-            <button
-              type="button"
-              onClick={() => onLoadSample('software_engineer')}
-              className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium cursor-pointer"
-            >
-              AI Eng
-            </button>
-            <button
-              type="button"
-              onClick={() => onLoadSample('product_manager')}
-              className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium cursor-pointer"
-            >
-              PM
-            </button>
-            <button
-              type="button"
-              onClick={() => onLoadSample('cloud_architect')}
-              className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium cursor-pointer"
-            >
-              Architect
-            </button>
-          </div>
-
           <button
             type="submit"
             disabled={isOrchestrating}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-xs font-bold tracking-wide uppercase bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/20 transition-all disabled:opacity-50 cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-xs font-bold tracking-wide uppercase bg-emerald-700 hover:bg-emerald-800 text-white shadow-md shadow-emerald-700/20 transition-all disabled:opacity-50 cursor-pointer"
           >
             {isOrchestrating ? (
               <>
                 <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Orchestrating Pipeline...</span>
+                <span>Creating your resume...</span>
               </>
             ) : (
               <>
                 <Play className="w-3.5 h-3.5 fill-current" />
-                <span>Orchestrate Resume Crew</span>
+                <span>Create my resume</span>
               </>
             )}
           </button>
@@ -301,7 +319,7 @@ export const InputForm: React.FC<InputFormProps> = ({
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors cursor-pointer ${
                 isActive
-                  ? 'border-indigo-600 text-indigo-600 bg-white font-bold'
+                  ? 'border-emerald-700 text-emerald-700 bg-white font-bold'
                   : 'border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-100/60'
               }`}
             >
@@ -310,7 +328,7 @@ export const InputForm: React.FC<InputFormProps> = ({
               {typeof tab.count === 'number' && tab.count > 0 && (
                 <span
                   className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono-code font-bold ${
-                    isActive ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'
+                    isActive ? 'bg-emerald-700 text-white' : 'bg-slate-200 text-slate-700'
                   }`}
                 >
                   {tab.count}
@@ -326,12 +344,12 @@ export const InputForm: React.FC<InputFormProps> = ({
         {/* TAB 1: TARGET JOB & JD */}
         {activeTab === 'target' && (
           <div className="space-y-5">
-            <div className="bg-indigo-50/60 rounded-xl p-4 border border-indigo-100 flex items-start gap-3 text-xs text-slate-700">
-              <Sparkles className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+            <div className="bg-emerald-50/60 rounded-xl p-4 border border-emerald-100 flex items-start gap-3 text-xs text-slate-700">
+              <Sparkles className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold text-slate-900">Target Role & ATS Vector Extraction:</p>
+                <p className="font-bold text-slate-900">Tell us about the job you want</p>
                 <p className="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
-                  The ATS Optimizer Agent extracts technical keywords, required tools, and domain taxonomy from the job description to align your resume keyword density to 90%+.
+                  Paste the job description if you have it. This helps us highlight the experience that matters most for that role.
                 </p>
               </div>
             </div>
@@ -339,7 +357,7 @@ export const InputForm: React.FC<InputFormProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1.5 font-mono-code">
-                  Target Job Title *
+                  Job title you want *
                 </label>
                 <input
                   type="text"
@@ -353,7 +371,7 @@ export const InputForm: React.FC<InputFormProps> = ({
 
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1.5 font-mono-code">
-                  Target Industry / Domain
+                  Field or industry
                 </label>
                 <input
                   type="text"
@@ -367,11 +385,11 @@ export const InputForm: React.FC<InputFormProps> = ({
 
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1.5 font-mono-code">
-                Target Job Description (Paste from Job Posting)
+                Job description (optional)
               </label>
               <textarea
                 rows={6}
-                placeholder="Paste requirements, qualifications, and role responsibilities from LinkedIn, Greenhouse, Lever, or company careers page..."
+                placeholder="Paste the job posting here so we can tailor your resume..."
                 value={formData.jobDescription || ''}
                 onChange={(e) => setFormData({ ...formData, jobDescription: e.target.value })}
                 className="w-full px-3.5 py-2 text-xs rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none font-mono-code text-slate-900 leading-relaxed transition-all"
@@ -502,16 +520,16 @@ export const InputForm: React.FC<InputFormProps> = ({
         {/* TAB 3: WORK HISTORY (GOOGLE XYZ FORMULA HERO) */}
         {activeTab === 'experience' && (
           <div className="space-y-6">
-            {/* Google XYZ Guidance Banner */}
-            <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-100 flex items-start gap-3">
-              <Zap className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
+            {/* Writing guidance */}
+            <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 flex items-start gap-3">
+              <Zap className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
               <div className="space-y-1 text-xs">
-                <span className="font-bold text-indigo-950 font-mono-code uppercase">
-                  Content Strategist: Google XYZ Optimization
+                  <span className="font-bold text-emerald-950 font-mono-code uppercase">
+                  Write about what you accomplished
                 </span>
                 <p className="text-slate-600 text-[11px] leading-relaxed">
-                  Enter rough bullet points or duties. The agent will transform each into the formula:
-                  <strong className="text-indigo-900 font-mono-code block mt-0.5">
+                  Rough notes are fine. Tell us what you did, what changed, and how you helped:
+                    <strong className="text-emerald-900 font-mono-code block mt-0.5">
                     &quot;Accomplished [X], as measured by [Y], by doing [Z]&quot;
                   </strong>
                 </p>
@@ -652,7 +670,7 @@ export const InputForm: React.FC<InputFormProps> = ({
         {activeTab === 'skills' && (
           <div className="space-y-4">
             <p className="text-xs text-slate-500">
-              Provide comma-separated lists. The ATS Optimizer Agent will match these against target job keywords.
+              Add skills separated by commas. We will organize them for you.
             </p>
 
             <div>

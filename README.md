@@ -1,13 +1,17 @@
 # CrewMyResume 🤖📄
 
-> **Autonomous Multi-Agent Resume Generation & ATS Optimization Platform**  
-> Engineered with Google Gemini, CrewAI & LangChain architectural principles, React 19, and Tailwind CSS.
+> **AI-powered resume builder for the job you want**
+> Turn your experience into a focused, readable, ATS-aware resume.
 
 ---
 
 ## 🌟 Overview
 
-**CrewMyResume** is an intelligent, multi-agent resume engineering workspace. Instead of treating resume creation as a single prompt, CrewMyResume orchestrates a specialized crew of **5 autonomous AI agents** that collaborate sequentially and in parallel to analyze, strategize, optimize, style, and verify job-winning resumes tailored to specific target positions and job descriptions.
+**CrewMyResume** helps people build a better resume without starting from scratch. Users can enter their details manually or upload an existing CV as a PDF. The app extracts the PDF text, uses Google Gemini to organize it into editable resume fields, and then runs a specialized crew of **5 AI agents** to analyze, improve, optimize, design, and verify the final resume.
+
+The workflow is:
+
+**Upload or enter details → Choose a target role → Create your resume → Review → Export**
 
 ---
 
@@ -17,7 +21,7 @@ The orchestration engine follows a Directed Acyclic Graph (DAG) workflow:
 
 ```
                   ┌───────────────────────────────┐
-                  │      User Input / Preset      │
+                  │    User Input / CV PDF       │
                   │  (Target Job, JD, Experience) │
                   └──────────────┬────────────────┘
                                  │
@@ -78,9 +82,10 @@ The orchestration engine follows a Directed Acyclic Graph (DAG) workflow:
 
 ---
 
-## ✨ Features
+## Features
 
 - **Autonomous Agent Orchestration**: Watch the 5 agents run in real-time with step-by-step reasoning logs and status badges.
+- **PDF CV Import**: Upload a PDF CV and let Gemini map its content into editable profile fields before generation.
 - **ATS Compliance Audit**: Detailed score cards measuring overall match (0–100), keyword density, semantic headings, and matched vs. missing skills.
 - **QA Certification Report**: Recruiter-level verification scores evaluating grammar, tense consistency, and quantified impact.
 - **Multiple Aesthetic Templates**:
@@ -92,8 +97,8 @@ The orchestration engine follows a Directed Acyclic Graph (DAG) workflow:
   - 📄 **Direct PDF Generation**: Pixel-perfect vector PDF export via `jspdf` and `html2canvas`.
   - 📝 **Markdown Download**: Clean, formatted markdown file for developer portfolios.
   - 📋 **Plain Text Copy**: One-click copy for easy pasting into application portals.
-- **1-Click Sample Profiles**: Instant testing with pre-loaded profiles for AI Engineers, Full-Stack Architects, and Product Managers.
-- **Editorial Minimalist UI**: Clean `#F8F9FA` canvas with high-contrast typography and responsive layouts across all device sizes.
+- **Plain-language workflow**: A beginner-friendly interface with no technical setup required inside the app.
+- **Editorial Minimalist UI**: Warm paper and sage surfaces, emerald actions, ink typography, and responsive layouts across all device sizes.
 
 ---
 
@@ -102,7 +107,7 @@ The orchestration engine follows a Directed Acyclic Graph (DAG) workflow:
 - **Frontend**: [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Tailwind CSS v4](https://tailwindcss.com/)
 - **Backend / API**: [Express.js](https://expressjs.com/), Node.js
 - **AI & LLM**: [@google/genai](https://www.npmjs.com/package/@google/genai) (Google Gemini Flash & Pro)
-- **PDF & Document Engine**: [jspdf](https://github.com/parallax/jsPDF), [html2canvas](https://html2canvas.hertzen.com/)
+- **PDF Import & Export**: [pdfjs-dist](https://github.com/mozilla/pdf.js), [jspdf](https://github.com/parallax/jsPDF), [html2canvas](https://html2canvas.hertzen.com/)
 - **Animations & Icons**: [Motion](https://motion.dev/), [Lucide React](https://lucide.dev/)
 - **Bundler & Tooling**: [Vite](https://vitejs.dev/), [esbuild](https://esbuild.github.io/), [tsx](https://github.com/privatenumber/tsx)
 
@@ -172,14 +177,13 @@ npm start
 │   ├── App.tsx                # Main container & orchestration state
 │   ├── index.css              # Global styling & Tailwind CSS imports
 │   ├── types.ts               # Shared TypeScript schemas & interfaces
-│   ├── data/
-│   │   └── sampleProfiles.ts  # Pre-configured test profiles & job descriptions
-│   ├── services/
-│   │   └── geminiService.ts   # Multi-agent client orchestration service & fallbacks
+│   ├── utils/
+│   │   └── pdfParser.ts       # Browser-side PDF text extraction
 │   └── components/
-│       ├── Navbar.tsx         # Top navigation bar with sample profile quick-pickers
+│       ├── LandingView.tsx    # Product landing page and workflow overview
+│       ├── Navbar.tsx         # Simple overview/studio navigation
 │       ├── InputForm.tsx      # Comprehensive candidate background & JD input tabs
-│       ├── AgentStatusCard.tsx# Live visual execution stream for the 5 agents
+│       ├── AgentWorkflowBoard.tsx # Live visual execution stream for the 5 agents
 │       ├── ResumePreview.tsx  # Interactive resume previewer with template & export tools
 │       ├── AtsAnalysisCard.tsx# ATS scoring gauge, keyword matching & recommendations
 │       ├── QAReportCard.tsx   # Recruiter QA score card, tense audit & applied fixes
@@ -191,7 +195,8 @@ npm start
 ## 🔒 Security Best Practices
 
 - **Server-Side API Key Protection**: The Google Gemini API key is accessed exclusively on the server (`server.ts`) and is never leaked to the client browser.
-- **Data Privacy**: Resume data and job postings are processed in-memory for orchestration and never permanently stored without user authorization.
+- **Data Privacy**: Resume data, uploaded PDF text, and job postings are processed in memory and are not permanently stored by this app.
+- **Credential hygiene**: Keep `.env` out of source control and rotate any API key that has been exposed publicly.
 
 ---
 
